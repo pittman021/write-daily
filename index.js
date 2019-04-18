@@ -68,7 +68,7 @@ window.onload = function() {
 
         if (!data) {
             textArea.value = 'get started writing!';
-            localStorage.setItem('drafts', []);
+            localStorage.setItem('drafts', JSON.stringify([]));
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
             textArea.value = data[pos].draft
@@ -89,7 +89,6 @@ window.onload = function() {
 
         if(save) {
 
-        
         // if there is no initial drafts, create initial draft with array
         if(data === null) { 
             var arry = [];
