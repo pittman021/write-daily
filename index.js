@@ -25,7 +25,7 @@ window.onload = function() {
     }
 
     
-    // app functions
+    // Helper Functions
     //
     function WordCount(str) {
         return str.split(' ')
@@ -39,8 +39,8 @@ window.onload = function() {
         count.innerHTML = WordCount(text);
         successCheck(wordCount);
     }
-
-    // eventListeners
+    //
+    // Event Listeners
     // 
     textArea.addEventListener('keyup', function(e) {
         
@@ -52,6 +52,20 @@ window.onload = function() {
             // Set timer that will save comment when it fires.
             timeoutId = setTimeout(saveDraftToStorage, 3000);
         }
+    });
+    
+    // jessus can you clean this up?
+    monthDates.addEventListener('click', function(e) {
+        var d = e.target.dataset.day;
+        var m = new Date().getMonth();
+        var today = new Date(new Date().toDateString()).toString();
+        var date = new Date(new Date(2019,m,d).toDateString()).toString();
+        var data = JSON.parse(localStorage.getItem('drafts'));
+        var pos = data.map(function(e) { return e.date; }).indexOf(date);
+        textArea.value = data[pos].draft
+        if(date !== today) save = false;
+        if(date === today) save = true; 
+        updateCount();
     });
 
     function successCheck(wordCount) {
@@ -67,7 +81,15 @@ window.onload = function() {
         var data = JSON.parse(localStorage.getItem('drafts'));
 
         if (!data) {
+            var arr = []
+            var t = 'get started writing!'
+            var obj = { 
+                draft: t,
+                date: date
+            }
+            arr.push(obj);
             textArea.value = 'get started writing!';
+            localStorage.setItem('drafts', JSON.stringify(arr))
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
             textArea.value = data[pos].draft
@@ -77,29 +99,20 @@ window.onload = function() {
         }
     }
 
-    function saveDraftToStorage() {
-        var draft = textArea.value;
+    function saveDraftToStorage(text) {
         var data = JSON.parse(localStorage.getItem('drafts'));
         var date = new Date(new Date().toDateString()).toString();
-        var obj = {
-                draft: draft,
-                date: date
-            }
 
+        // check whether save var is true, which is set when date is today. cant save old posts // 
         if(save) {
 
-        // if there is no initial drafts, create initial draft with array
-        if(data === null) { 
-            var arry = [];
-            arry.push(obj);
-            localStorage.setItem('drafts', JSON.stringify(arry))
-        } else {
+        // there should always be a draft
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
             
             // if date is not found. push new record for that date // 
             if(pos === -1) {
                 var obj = {
-                    draft: draft,
+                    draft: text,
                     date: date
                 }
                 data.push(obj);
@@ -111,7 +124,7 @@ window.onload = function() {
                 
                 // update draft if date already exist // 
                 } else {
-                    data[pos].draft = draft
+                    data[pos].draft = text
                     localStorage.setItem('drafts', JSON.stringify(data))
                     saveStatus.innerHTML = 'post saved';
                     setTimeout(function() {
@@ -121,43 +134,42 @@ window.onload = function() {
 
         }
     }        
-    }
 
 
     // setup
-    function init() {
-      var days = daysInMonth( moment().month() );
-      setInitialContent();   
-      count.innerHTML = WordCount(textArea.value)
+    function buildButtonList() {
+        var days = daysInMonth( moment().month() );
+        days.forEach(function(day,key) {
+            var dayMonth = key + 1;
+           // get the month 
+            var m = new Date().getMonth();
+            var date = new Date(new Date(2019,m,dayMonth).toDateString()).toString();
+            var data = JSON.parse(localStorage.getItem('drafts'));
+            if(!data) {
+              addDateButton(day,dayMonth, true);
+              
+            } else {
+              var pos = data.map(function(e) { return e.date; }).indexOf(date);
+              if(pos === -1) {
+                  addDateButton(day,dayMonth, true)
+                } else {
+                    addDateButton(day,dayMonth, false);
+                }
+            }
+        });
+    }
 
       // set days or whatever // 
-      days.forEach(function(d,i) {
-          var day = i + 1;
-         // get the month 
-          var m = new Date().getMonth();
-          var date = new Date(new Date(2019,m,day ).toDateString()).toString();
-          var data = JSON.parse(localStorage.getItem('drafts'));
-          if(!data) {
+      function addDateButton(buttonText,day, disabled) {
+            // create the button 
             var p = document.createElement('button');
-            var t = document.createTextNode(d);
-            p.setAttribute('data-day', i + 1);
+            var t = document.createTextNode(buttonText);
+            p.setAttribute('data-day', day)
             p.disabled = true;
             p.appendChild(t);
             monthDates.appendChild(p);
-          } else {
-            var pos = data.map(function(e) { return e.date; }).indexOf(date);
-            var p = document.createElement('button');
-            var t = document.createTextNode(d);
-            p.setAttribute('data-day', i + 1);
-            p.appendChild(t);
-            monthDates.appendChild(p);
-            if(pos === -1) {
-                p.disabled = true;
-              }  
-          }
-      });
-
-    }
+            p.disabled = disabled;
+      }
 
     function daysInMonth(month) {
         var count =  moment().month(month).daysInMonth();
@@ -168,19 +180,13 @@ window.onload = function() {
         return days;
       }
 
-      monthDates.addEventListener('click', function(e) {
-          var d = e.target.dataset.day;
-          var m = new Date().getMonth();
-          var today = new Date(new Date().toDateString()).toString();
-          var date = new Date(new Date(2019,m,d).toDateString()).toString();
-          var data = JSON.parse(localStorage.getItem('drafts'));
-          var pos = data.map(function(e) { return e.date; }).indexOf(date);
-          textArea.value = data[pos].draft
-          if(date !== today) save = false;
-          if(date === today) save = true; 
-          updateCount();
-      })
+      function init() {
+        setInitialContent();
+        buildButtonList(); 
+        count.innerHTML = WordCount(textArea.value);
+  
+      }
 
-    init();
+      init();
 }
 
