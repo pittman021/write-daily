@@ -68,7 +68,6 @@ window.onload = function() {
 
         if (!data) {
             textArea.value = 'get started writing!';
-            localStorage.setItem('drafts', JSON.stringify([]));
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
             textArea.value = data[pos].draft
@@ -138,18 +137,24 @@ window.onload = function() {
           var m = new Date().getMonth();
           var date = new Date(new Date(2019,m,day ).toDateString()).toString();
           var data = JSON.parse(localStorage.getItem('drafts'));
-          var pos = data.map(function(e) { return e.date; }).indexOf(date);
-          //
-          var p = document.createElement('button');
-          p.setAttribute('data-day', i + 1);
-          var t = document.createTextNode(d);
-          // 
-          p.appendChild(t);
-          monthDates.appendChild(p);
-
-          if(pos === -1) {
+          if(!data) {
+            var p = document.createElement('button');
+            var t = document.createTextNode(d);
+            p.setAttribute('data-day', i + 1);
             p.disabled = true;
-          }   
+            p.appendChild(t);
+            monthDates.appendChild(p);
+          } else {
+            var pos = data.map(function(e) { return e.date; }).indexOf(date);
+            var p = document.createElement('button');
+            var t = document.createTextNode(d);
+            p.setAttribute('data-day', i + 1);
+            p.appendChild(t);
+            monthDates.appendChild(p);
+            if(pos === -1) {
+                p.disabled = true;
+              }  
+          }
       });
 
     }
