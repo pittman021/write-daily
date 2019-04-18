@@ -1,0 +1,86 @@
+
+
+html {
+position:relative; 
+min-height: 100%;
+}
+
+html, body, textarea {
+font-family: 'Work Sans', serif;
+font-weight: 400;
+font-size: 20px;
+margin:0;
+padding:0;
+}
+
+textarea {
+    min-height:200px;
+    width: 700px;
+    border: none;
+    resize:none;
+    overflow-y:hidden;
+    outline:none;
+}
+
+.row {
+    display: flex;
+  }
+  
+  .column {
+    flex: 50%;
+  }
+
+.main {
+    margin: 0 auto;
+    width:650px;
+}
+
+.header {
+    text-align:center;
+}
+
+.success {
+    color:green;
+    font-weight:bold;
+}
+
+li:active {
+    background-color: blue;
+}
+
+#word-goal li {
+    display: inline;
+}
+
+#word-goal ul {
+    padding: 0px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height:4em;
+}
+
+.word-count {
+    width:150px;
+    float:left
+}
+
+.green {
+    color:green
+}
+
+.text-small {
+    font-size: .75em;
+}
+
+#save-status {
+    margin-top: -20px;
+}
+
+.grey {
+    color:grey;
+}
