@@ -7,9 +7,10 @@ window.onload = function() {
     var count = document.querySelector('#count');
     var wordGoal = document.querySelector('#word-goal');
     var saveStatus = document.querySelector('#save-status');
-    var textArea = document.querySelector('#textArea');
     var todaysDate = document.querySelector('#todays-date');
+    var monthDates = document.querySelector('#month-dates');
     var timeoutId;
+    var save = true;
 
     var tx = document.getElementsByTagName('textarea');
 
@@ -63,15 +64,14 @@ window.onload = function() {
 
     function setInitialContent() {
         var date = new Date(new Date().toDateString()).toString();
-        var rawDate = new Date();
         var data = JSON.parse(localStorage.getItem('drafts'));
 
         if (!data) {
-            textArea.innerHTML = 'get started writing!';
+            textArea.value = 'get started writing!';
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
-            textArea.innerHTML = data[pos].draft
-            todaysDate.innerHTML = rawDate.getMonth() + '-' + rawDate.getDay()  + '-' + rawDate.getFullYear()
+            textArea.value = data[pos].draft
+            todaysDate.innerHTML = moment().format('MMMM Do, YYYY');
             textArea.dispatchEvent(new Event('change'));
 
         }
@@ -86,6 +86,10 @@ window.onload = function() {
                 date: date
             }
 
+        if(save) {
+
+        
+        // if there is no initial drafts, create initial draft with array
         if(data === null) { 
             var arry = [];
             arry.push(obj);
@@ -116,17 +120,62 @@ window.onload = function() {
                     }, 2000)
                 }
 
-        }        
+        }
+    }        
     }
 
 
     // setup
     function init() {
+      var days = daysInMonth( moment().month() );
       setInitialContent();   
-      count.innerHTML = WordCount(textArea.innerHTML)
+      count.innerHTML = WordCount(textArea.value)
+
+      // set days or whatever // 
+      days.forEach(function(d,i) {
+          var day = i + 1;
+         // get the month 
+          var m = new Date().getMonth();
+          var date = new Date(new Date(2019,m,day ).toDateString()).toString();
+          var data = JSON.parse(localStorage.getItem('drafts'));
+          var pos = data.map(function(e) { return e.date; }).indexOf(date);
+          //
+          var p = document.createElement('button');
+          p.setAttribute('data-day', i + 1);
+          var t = document.createTextNode(d);
+          // 
+          p.appendChild(t);
+          monthDates.appendChild(p);
+
+          if(pos === -1) {
+            p.disabled = true;
+          }   
+      });
+
     }
 
-    init();
+    function daysInMonth(month) {
+        var count =  moment().month(month).daysInMonth();
+        var days = [];
+        for (var i = 1; i < count+1; i++) {
+          days.push(moment().month(month).date(i).format('M-D'));
+        }
+        return days;
+      }
 
+      monthDates.addEventListener('click', function(e) {
+          var d = e.target.dataset.day;
+          var m = new Date().getMonth();
+          var today = new Date(new Date().toDateString()).toString();
+          var date = new Date(new Date(2019,m,d).toDateString()).toString();
+          var data = JSON.parse(localStorage.getItem('drafts'));
+          var pos = data.map(function(e) { return e.date; }).indexOf(date);
+          textArea.value = data[pos].draft
+          if(date !== today) save = false;
+          if(date === today) save = true; 
+          updateCount();
+      })
+
+    init();
 }
 
