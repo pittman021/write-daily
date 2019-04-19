@@ -82,13 +82,12 @@ window.onload = function() {
 
         if (!data) {
             var arr = []
-            var t = 'get started writing!'
             var obj = { 
-                draft: t,
+                draft: "Get started writing!",
                 date: date
             }
             arr.push(obj);
-            textArea.value = 'get started writing!';
+            textArea.value = "Get started writing!";
             localStorage.setItem('drafts', JSON.stringify(arr))
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
@@ -160,9 +159,9 @@ window.onload = function() {
     }
 
       // set days or whatever // 
-      function addDateButton(buttonText,day, disabled) {
+      function addDateButton(buttonText, day, disabled) {
             // create the button 
-            var p = document.createElement('button');
+            var p = document.createElement('button');   
             var t = document.createTextNode(buttonText);
             p.setAttribute('data-day', day)
             p.disabled = true;
