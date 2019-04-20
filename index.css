@@ -22,6 +22,11 @@ textarea {
     outline:none;
 }
 
+textarea:disabled {
+    color: darkgrey;
+    background: white;
+}
+
 .row {
     display: flex;
   }
