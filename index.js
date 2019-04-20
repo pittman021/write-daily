@@ -79,21 +79,35 @@ window.onload = function() {
     function setInitialContent() {
         var date = new Date(new Date().toDateString()).toString();
         var data = JSON.parse(localStorage.getItem('drafts'));
+        var arr = [];
+        var obj = { 
+            draft: "",
+            date: date
+        }
+        // setup new localStorage object for a new session.
+        arr.push(obj);
 
+        // if there's no saved drafts in session, create a new one & display it. 
         if (!data) {
-            var arr = []
-            var obj = { 
-                draft: "Get started writing!",
-                date: date
-            }
-            arr.push(obj);
             textArea.value = "Get started writing!";
             localStorage.setItem('drafts', JSON.stringify(arr))
+        
+        // if there's data saved, find today's record. If no record for today, setup new one. 
         } else {
             var pos = data.map(function(e) { return e.date; }).indexOf(date);
+
+            // if no post for today. tis a new day! 
+            if(pos === -1) {
+                data.push(obj);
+                localStorage.setItem('drafts', JSON.stringify(data));
+                textArea.value = "Today is a new day! Start writing =)";
+            } else {
+            // if there is today's post. show it in textArea // 
             textArea.value = data[pos].draft
-            todaysDate.innerHTML = moment().format('MMMM Do, YYYY');
             textArea.dispatchEvent(new Event('change'));
+
+            }
+
 
         }
     }
@@ -180,10 +194,14 @@ window.onload = function() {
       }
 
       function init() {
+        // populate textArea with today's post or blank slate. 
         setInitialContent();
+        // check localStorage & build this month's list of writing to review. 
         buildButtonList(); 
+        // update counter
         count.innerHTML = WordCount(textArea.value);
-  
+        // set today's date
+        todaysDate.innerHTML = moment().format('MMMM Do, YYYY');
       }
 
       init();
