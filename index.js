@@ -138,28 +138,34 @@ class Journal {
         var m = new Date().getMonth();
         var date = new Date(new Date(2019,m,dayMonth).toDateString()).toString();
         if(!this.data) {
-            this.addDateButton(day,dayMonth, true);
+            this.addDateButton(day,dayMonth,date, true);
             
         } else {
             var pos = this.data.map(function(e) { return e.date; }).indexOf(date);
             if(pos === -1) {
-                this.addDateButton(day,dayMonth, true)
+                this.addDateButton(day,dayMonth,date, true)
             } else {
-                this.addDateButton(day,dayMonth, false);
+                this.addDateButton(day,dayMonth,date, false);
             }
         }
     }.bind(this));
     }
 
-    addDateButton(buttonText, day, disabled) {
+    addDateButton(buttonText, day, date, disabled) {
         // create the button 
         var p = document.createElement('button');   
-        var t = document.createTextNode(buttonText);
+
+        // make button blue if there's writing in it // 
+        if(!disabled) {
+            p.classList.add('active');
+          }
+
+        // add class, data-val and append to mothDatesdiv. Set ac
+        p.classList.add('button-day');
         p.setAttribute('data-day', day)
-        p.disabled = true;
-        p.appendChild(t);
+        p.title = moment(date).format('M-D')
         this.monthDates.appendChild(p);
-        p.disabled = disabled;
+        // p.disabled = disabled;
   }
 
     daysInMonth(month) {
