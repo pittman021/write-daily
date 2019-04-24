@@ -26,7 +26,15 @@ class Journal {
     bindEvents() {
         textArea.addEventListener('keyup', (e) => this.setText(e));
         this.monthDates.addEventListener('click', (e) => this.chooseDraftDate(e));
+        textArea.addEventListener("input", this.OnInput, false);
         }
+
+        OnInput() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            this.scrollTop = this.scrollHeight 
+
+            }
 
 
         setInitialContent() {

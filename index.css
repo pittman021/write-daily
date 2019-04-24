@@ -18,6 +18,7 @@ textarea {
     resize:none;
     overflow-y:hidden;
     outline:none;
+    position:relative;
 }
 
 textarea:disabled {
